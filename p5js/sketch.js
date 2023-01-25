@@ -32,7 +32,7 @@ function parse_string(){
 }
 function setup() {
     createCanvas(400, 400);
-    background(54);
+    
 
     // answer_arr = answer.split(" ");
     parse_string();
@@ -41,11 +41,26 @@ function setup() {
 
 function displayText(){
     let words_displayed = 0;
+    let character_displayed = 0;
+    console.log(answer_arr);
     for (let i=0; i<answer_arr.length; i++) {
+        character_displayed = 0;
         for (let j=0; j<answer_arr[i].length; j++){
-            if (words_displayed <= counter){
+            // console.log(words_displayed, counter);
+            if (words_displayed < counter){
                 fill(200);
-                
+                text(answer_arr[i][j]+" ", 100+6*character_displayed, 100+i*50);
+                character_displayed+=answer_arr[i][j].length+1;
+                words_displayed++;
+            }
+            // else if (words_displaed == counter){
+
+            // }  
+            else{
+                fill(100);
+                text(answer_arr[i][j]+" ", 100+6*character_displayed, 100+i*50);
+                character_displayed+=answer_arr[i][j].length+1;
+                words_displayed++;
             }
         }
     }
@@ -53,21 +68,25 @@ function displayText(){
 
 function draw() {
     current_time++;
+    background(54);
     // background(220);
     // circle(100, 100, 100);
     textFont('Ubuntu Mono');
+    fill(255);
     text(current, 0, 400);
     
-    if (current_time%3 == 0 && backspace && time > backspace_time){
+    if (current_time%3 == 0 && backspace && current_time > backspace_time){
         current=current.substring(0, current.length-1);
+        onInputChange();
     }
 
     displayText();
+    // console.log(counter);
   
 }
 
 function onInputChange(){
-    if (current == ans_arr[counter]){
+    if (current == answer.split(" ")[counter]){
         counter++;
         current = ""; 
     }
@@ -75,15 +94,16 @@ function onInputChange(){
 
 function keyTyped(){
     current += key;
+    onInputChange();
 }
 
 function keyPressed(){
     if (keyCode == BACKSPACE){
         current=current.substring(0, current.length-1);
 
-        backspace_time = time+20;
+        backspace_time = current_time+20;
         backspace = true;
-        
+        onInputChange();
     }
 }
 
