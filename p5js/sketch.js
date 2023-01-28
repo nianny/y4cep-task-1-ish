@@ -25,6 +25,13 @@ let height_per_wpm = 0;
 let max_wpm = 0;
 let max_height = 0;
 
+let hover_img;
+let no_hover_img;
+
+function preload(){
+    hover_img = loadImage("images/hover.png");
+    no_hover_img = loadImage("images/no_hover.png");
+}
 function to_one_dp(x){
     return Math.round(x*10)/10;
 }
@@ -53,6 +60,8 @@ function setup() {
     halloooo_width = (windowWidth-2*halloooo_start)/letter_width;
     angleMode(DEGREES); 
     textAlign(LEFT, TOP);
+    imageMode(CENTER);
+    rectMode(CENTER);
 
     // hallooo_fun_guess_thingi_arr = hallooo_fun_guess_thingi.split(" ");
 }
@@ -104,15 +113,16 @@ function draw_graph(){
     textAlign(CENTER, CENTER);
     text("Time/s", convert_cord((max_time-1)/2+1, 0)[0], convert_cord((max_time-1)/2+1, 0)[1]+letter_height*2);
     
-    let x_cord = convert_cord(1, max_wpm/2)[0]-letter_width*2;
+    let x_cord = convert_cord(1, max_wpm/2)[0]-letter_width*10;
     let y_cord = convert_cord(1,max_wpm/2)[1];
 
-    translate(x_cord, y_cord);
-    // rotate(180);
-    text("Word per minute", 0, 0);
+    // translate(x_cord, y_cord);
+    rotate(-90);
+    text("Word per minute", -y_cord, x_cord);
+    // circle(-y_cord, x_cord,10);
     // text("Wpm", convert_cord(1, max_wpm/2)[0]-letter_width, convert_cord(1, max_wpm/2)[1]);
-    // rotate(180);
-    translate(0,0);
+    rotate(90);
+    // translate(0,0);
     
 
     for (let i=0; i<wpm_arr.length; i++) {
@@ -149,7 +159,7 @@ function displayText(){
         if (cur_arr[i].length < ans_arr[i].length){
             for (let j=0; j<cur_arr[i].length; j++){
                 if (cur_arr[i][j] == ans_arr[i][j]){
-                    fill(200);
+                    fill(230);
                     text(ans_arr[i][j], halloooo_start+char_num*letter_width, halloooo_start+line_num*letter_height);
                     
                 }
@@ -169,7 +179,7 @@ function displayText(){
         else{
             for(let j=0; j<ans_arr[i].length; j++){
                 if (cur_arr[i][j] == ans_arr[i][j]){
-                    fill(200);
+                    fill(230);
                     text(ans_arr[i][j], halloooo_start+char_num*letter_width, halloooo_start+line_num*letter_height);
                     
                 }
@@ -206,7 +216,13 @@ function draw() {
     background(56);
     textFont('Ubuntu Mono', 20);
     fill(255);
-
+    if (mouseX >= width/2-50 && mouseX <= width/2+50 && mouseY >=height-halloooo_width-40 && mouseY <= height-halloooo_width+40){
+        fill(45);
+        noStroke();
+        rect(width/2, height-halloooo_width, 100, 80, 5);
+        image(hover_img, width/2, height-halloooo_width);
+    }
+    image(no_hover_img, width/2, height-halloooo_width);
     if(game_over){
         noStroke();
         // text(end_time-start_time, 100, 100);
@@ -236,6 +252,8 @@ function draw() {
     }
 
     displayText();
+    
+    // image(no_hover_img, 0, 0);
     // console.log(counter);
 
     // circle(halloooo_start, halloooo_start, 10);
@@ -283,4 +301,26 @@ function deleteInput(){
     }
     wot_people_guessed = wot_people_guessed.substring(0, wot_people_guessed.length-1);
     onInputChange();
+}
+
+function mouseClicked(){
+    if (mouseX >= width/2-50 && mouseX <= width/2+50 && mouseY >=height-halloooo_width-40 && mouseY <= height-halloooo_width+40){
+        wot_people_guessed = "";
+        backspace = false;
+        backspace_time = 0;
+        start_time = 0;
+        end_time = 0;
+        ans_arr = [];
+        cur_arr = [];
+        game_over = false;
+        started = false;
+        wpm = 0;
+        raw_wpm = 0;
+        wpm_arr = [];
+        available_width = 0;
+        available_height = 0;
+        height_per_wpm = 0;
+        max_wpm = 0;
+        max_height = 0;
+    }
 }
