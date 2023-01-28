@@ -51,6 +51,8 @@ function setup() {
     // createCanvas(400, 400);
     createCanvas(windowWidth, windowHeight);
     halloooo_width = (windowWidth-2*halloooo_start)/letter_width;
+    angleMode(DEGREES); 
+    textAlign(LEFT, TOP);
 
     // hallooo_fun_guess_thingi_arr = hallooo_fun_guess_thingi.split(" ");
 }
@@ -76,31 +78,51 @@ function draw_graph(){
     for (let i=0; i<wpm_arr.length; i++) {
         cords[i] = convert_cord(wpm_arr[i][0], wpm_arr[i][1]);
         // console.log(wpm_arr[i][0], wpm_arr[i][1], cords[0], cords[1]);
-        noStroke();
-        fill(131, 211, 255);
-        circle(cords[i][0], cords[i][1], letter_width);
+        // noStroke();
+        // fill(131, 211, 255);
+        // circle(cords[i][0], cords[i][1], letter_width);
 
         fill(100);
-        textAlign(CENTER);
-        text(wpm_arr[i][0], cords[i][0], halloooo_start+available_height+letter_height);
+        textAlign(CENTER, CENTER);
+        text(wpm_arr[i][0], cords[i][0], halloooo_start+available_height+letter_height/2);
 
         stroke(50);
         strokeWeight(1);
         line(convert_cord(wpm_arr[i][0], 0)[0], convert_cord(wpm_arr[i][0], 0)[1], convert_cord(wpm_arr[i][0], Math.ceil(max_wpm/30)*30)[0], convert_cord(wpm_arr[i][0], Math.ceil(max_wpm/30)*30)[1]);
-        
     }
 
     line(convert_cord(1, 0)[0], convert_cord(1,0)[1], convert_cord(max_time, 0)[0], convert_cord(max_time, 0)[1]);
     line(convert_cord(1, max_wpm/3)[0], convert_cord(1,max_wpm/3)[1], convert_cord(max_time, max_wpm/3)[0], convert_cord(max_time, max_wpm/3)[1]);
     line(convert_cord(1, max_wpm/3*2)[0], convert_cord(1,max_wpm/3*2)[1], convert_cord(max_time, max_wpm/3*2)[0], convert_cord(max_time, max_wpm/3*2)[1]);
     line(convert_cord(1, max_wpm)[0], convert_cord(1,max_wpm)[1], convert_cord(max_time, max_wpm)[0], convert_cord(max_time, max_wpm)[1]);
-    text(0, convert_cord(1, 0)[0]-2*letter_width, convert_cord(1,0)[1]+letter_height/4);
-    textAlign(RIGHT);
-    text(max_wpm/3, convert_cord(1, max_wpm/3)[0]-letter_width, convert_cord(1,max_wpm/3)[1]+letter_height/4);
-    text(max_wpm/3*2, convert_cord(1, max_wpm/3*2)[0]-letter_width, convert_cord(1,max_wpm/3*2)[1]+letter_height/4);
-    text(max_wpm, convert_cord(1, max_wpm)[0]-letter_width, convert_cord(1,max_wpm)[1]+letter_height/4);
-    textAlign(LEFT);
-    noStroke();
+    textAlign(RIGHT, CENTER);
+    text(0, convert_cord(1, 0)[0]-letter_width, convert_cord(1,0)[1]);
+    text(max_wpm/3, convert_cord(1, max_wpm/3)[0]-letter_width, convert_cord(1,max_wpm/3)[1]);
+    text(max_wpm/3*2, convert_cord(1, max_wpm/3*2)[0]-letter_width, convert_cord(1,max_wpm/3*2)[1]);
+    text(max_wpm, convert_cord(1, max_wpm)[0]-letter_width, convert_cord(1,max_wpm)[1]);
+    
+    textAlign(CENTER, CENTER);
+    text("Time/s", convert_cord((max_time-1)/2+1, 0)[0], convert_cord((max_time-1)/2+1, 0)[1]+letter_height*2);
+    
+    let x_cord = convert_cord(1, max_wpm/2)[0]-letter_width*2;
+    let y_cord = convert_cord(1,max_wpm/2)[1];
+
+    translate(x_cord, y_cord);
+    // rotate(180);
+    text("Word per minute", 0, 0);
+    // text("Wpm", convert_cord(1, max_wpm/2)[0]-letter_width, convert_cord(1, max_wpm/2)[1]);
+    // rotate(180);
+    translate(0,0);
+    
+
+    for (let i=0; i<wpm_arr.length; i++) {
+        cords[i] = convert_cord(wpm_arr[i][0], wpm_arr[i][1]);
+        // console.log(wpm_arr[i][0], wpm_arr[i][1], cords[0], cords[1]);
+        noStroke();
+        fill(131, 211, 255);
+        circle(cords[i][0], cords[i][1], letter_width);
+
+    }
     for (let i=0; i<cords.length-1; i++){
         strokeWeight(3);
         stroke(131, 211, 255);
@@ -109,7 +131,7 @@ function draw_graph(){
         // noStroke();
         // fill(150);
     }
-
+    textAlign(LEFT, TOP);
 }
 function displayText(){
     recalculate_arrays();
@@ -187,8 +209,8 @@ function draw() {
 
     if(game_over){
         noStroke();
-        text(end_time-start_time, 100, 100);
-        text(wpm, 100, 150);
+        // text(end_time-start_time, 100, 100);
+        text("Words per minute: "+wpm, 100, 50);
         draw_graph();
         return;
     }
@@ -215,6 +237,8 @@ function draw() {
 
     displayText();
     // console.log(counter);
+
+    // circle(halloooo_start, halloooo_start, 10);
   
 }
 
