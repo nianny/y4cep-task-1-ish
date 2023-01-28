@@ -21,9 +21,13 @@ let raw_wpm = 0;
 let wpm_arr = [];
 let available_width = 0;
 let available_height = 0;
+let height_per_wpm = 0;
 let max_wpm = 0;
 let max_height = 0;
 
+function to_one_dp(x){
+    return Math.round(x*10)/10;
+}
 function recalculate_arrays(){
     ans_arr = hallooo_fun_guess_thingi.split(" ");
     cur_arr = wot_people_guessed.split(" ");
@@ -37,7 +41,7 @@ function recalculate_arrays(){
     // console.log(Date.now() - start_time, (wpm_arr.length + 1)*1000, started);
     // console.log(Date.now() - start_time, raw_wpm, wpm);
     if (started && ((Date.now() - start_time) > (wpm_arr.length + 1)*1000)){
-        wpm_arr.push([Date.now() - start_time, wpm]);
+        wpm_arr.push([to_one_dp((Date.now() - start_time)/1000), wpm]);
     }
     // console.log(wpm_arr);
     // console.log(ans_arr);
@@ -52,24 +56,58 @@ function setup() {
 }
 
 function convert_cord(x, y){
-    return [(available_width/max_time * (x-1000)) + halloooo_start*2, halloooo_start*1.25 + available_height/max_wpm * (max_wpm - y)]
+    return [(available_width/max_time * (x-1)) + halloooo_start*2, halloooo_start + available_height/max_wpm * (max_wpm - y)]
 }
 
 function draw_graph(){
-    available_width = width - halloooo_start*4;
+    available_width = width - halloooo_start*3;
     available_height = height - halloooo_start*3;
 
     max_wpm = 0;
     for (let i=0; i<wpm_arr.length; i++){
         max_wpm = Math.max(max_wpm, wpm_arr[i][1]);
     }
-    max_time = wpm_arr[wpm_arr.length -1][0];
-    console.log(max_wpm);
+    max_time = wpm_arr[wpm_arr.length-1][0];
 
+    max_wpm = Math.ceil((max_wpm+10)/30)*30;
+    // height_per_wpm = available_height/(Math.ceil(max_wpm/30)*30);
+    
+    let cords = [];
     for (let i=0; i<wpm_arr.length; i++) {
-        let cords = convert_cord(wpm_arr[i][0], wpm_arr[i][1]);
+        cords[i] = convert_cord(wpm_arr[i][0], wpm_arr[i][1]);
         // console.log(wpm_arr[i][0], wpm_arr[i][1], cords[0], cords[1]);
-        circle(cords[0], cords[1], letter_width);
+        noStroke();
+        fill(131, 211, 255);
+        circle(cords[i][0], cords[i][1], letter_width);
+
+        fill(100);
+        textAlign(CENTER);
+        text(wpm_arr[i][0], cords[i][0], halloooo_start+available_height+letter_height);
+
+        stroke(50);
+        strokeWeight(1);
+        line(convert_cord(wpm_arr[i][0], 0)[0], convert_cord(wpm_arr[i][0], 0)[1], convert_cord(wpm_arr[i][0], Math.ceil(max_wpm/30)*30)[0], convert_cord(wpm_arr[i][0], Math.ceil(max_wpm/30)*30)[1]);
+        
+    }
+
+    line(convert_cord(1, 0)[0], convert_cord(1,0)[1], convert_cord(max_time, 0)[0], convert_cord(max_time, 0)[1]);
+    line(convert_cord(1, max_wpm/3)[0], convert_cord(1,max_wpm/3)[1], convert_cord(max_time, max_wpm/3)[0], convert_cord(max_time, max_wpm/3)[1]);
+    line(convert_cord(1, max_wpm/3*2)[0], convert_cord(1,max_wpm/3*2)[1], convert_cord(max_time, max_wpm/3*2)[0], convert_cord(max_time, max_wpm/3*2)[1]);
+    line(convert_cord(1, max_wpm)[0], convert_cord(1,max_wpm)[1], convert_cord(max_time, max_wpm)[0], convert_cord(max_time, max_wpm)[1]);
+    text(0, convert_cord(1, 0)[0]-2*letter_width, convert_cord(1,0)[1]+letter_height/4);
+    textAlign(RIGHT);
+    text(max_wpm/3, convert_cord(1, max_wpm/3)[0]-letter_width, convert_cord(1,max_wpm/3)[1]+letter_height/4);
+    text(max_wpm/3*2, convert_cord(1, max_wpm/3*2)[0]-letter_width, convert_cord(1,max_wpm/3*2)[1]+letter_height/4);
+    text(max_wpm, convert_cord(1, max_wpm)[0]-letter_width, convert_cord(1,max_wpm)[1]+letter_height/4);
+    textAlign(LEFT);
+    noStroke();
+    for (let i=0; i<cords.length-1; i++){
+        strokeWeight(3);
+        stroke(131, 211, 255);
+        line(cords[i][0], cords[i][1], cords[i+1][0], cords[i+1][1]);
+
+        // noStroke();
+        // fill(150);
     }
 
 }
@@ -148,6 +186,7 @@ function draw() {
     fill(255);
 
     if(game_over){
+        noStroke();
         text(end_time-start_time, 100, 100);
         text(wpm, 100, 150);
         draw_graph();
@@ -161,9 +200,12 @@ function draw() {
         game_over = true;
         end_time = Date.now();
         // console.log(wpm, start_time, end_time);
-        wpm_arr.push([end_time-start_time, wpm]);
+        wpm_arr.push([to_one_dp((end_time-start_time)/1000), wpm]);
         // console.log(Date());
         console.log(wpm_arr);
+        if (wpm_arr[wpm_arr.length -1][0] == wpm_arr[wpm_arr.length -2][0]){
+            wpm_arr.pop();
+        }
     }
     
     if (frame%3 == 0 && backspace && frame > backspace_time){
